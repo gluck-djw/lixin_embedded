@@ -107,20 +107,7 @@ int main(void)
     /* USER CODE END 3 */
 		
   }
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-
-    if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET)
-    {
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
-    }
-    else
-    {
-        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
-    }
-		
-  /* USER CODE END 3 */
+	
 }
 
 /**
