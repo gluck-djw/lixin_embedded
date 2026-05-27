@@ -1,0 +1,26 @@
+--cpu=Cortex-M4.fp.sp
+"led06\startup_stm32f411xe.o"
+"led06\main.o"
+"led06\gpio.o"
+"led06\stm32f4xx_it.o"
+"led06\stm32f4xx_hal_msp.o"
+"led06\stm32f4xx_hal_tim.o"
+"led06\stm32f4xx_hal_tim_ex.o"
+"led06\stm32f4xx_hal_rcc.o"
+"led06\stm32f4xx_hal_rcc_ex.o"
+"led06\stm32f4xx_hal_flash.o"
+"led06\stm32f4xx_hal_flash_ex.o"
+"led06\stm32f4xx_hal_flash_ramfunc.o"
+"led06\stm32f4xx_hal_gpio.o"
+"led06\stm32f4xx_hal_dma_ex.o"
+"led06\stm32f4xx_hal_dma.o"
+"led06\stm32f4xx_hal_pwr.o"
+"led06\stm32f4xx_hal_pwr_ex.o"
+"led06\stm32f4xx_hal_cortex.o"
+"led06\stm32f4xx_hal.o"
+"led06\stm32f4xx_hal_exti.o"
+"led06\system_stm32f4xx.o"
+--strict --scatter "LED06\LED06.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "LED06.map" -o LED06\LED06.axf
