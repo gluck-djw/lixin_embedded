@@ -30,7 +30,6 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -53,17 +52,17 @@
 void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
-	#ifdef __GNUC__
-	#define PUTCHAR_PROTOTYPE int _io_putchar(int ch)
-	#else
-	#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-	#endif
+#ifdef __GNUC__
+#define PUTCHAR_PROTOTYPE int _io_putchar(int ch)
+#else
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif
 
-  PUTCHAR_PROTOTYPE
-  {
-    HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
-    return ch;
-  }
+PUTCHAR_PROTOTYPE
+{
+  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
+  return ch;
+}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -78,7 +77,6 @@ void MX_FREERTOS_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
 
   /* USER CODE END 1 */
 
