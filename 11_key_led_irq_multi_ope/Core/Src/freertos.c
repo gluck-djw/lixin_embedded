@@ -25,8 +25,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "bsp_key.h"
 #include "led_sm.h"
 #include "key.h"
+#include "queue.h"
 
 /* USER CODE END Includes */
 
@@ -51,6 +53,9 @@
 /* USER CODE END Variables */
 
 /* ---- 用户任务变量 ---- */
+QueueHandle_t keyQueue = NULL;
+QueueHandle_t ledQueue = NULL;
+
 osThreadId_t key_TaskHandle;
 const osThreadAttr_t key_Task_attributes = {
   .name = "key_Task",
@@ -78,6 +83,7 @@ const osThreadAttr_t defaultTask_attributes = {
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void* argument);
+void Key_Task(void* argument);
 void Led_Task(void* argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -106,7 +112,8 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
-  key_init();                                  /* key 模块自建队列     */
+  keyQueue = xQueueCreate(5, sizeof(key_isr_msg_t));
+  ledQueue = xQueueCreate(5, sizeof(key_event_t));
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
@@ -115,7 +122,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  key_TaskHandle = osThreadNew(key_task, NULL, &key_Task_attributes);
+  key_TaskHandle = osThreadNew(Key_Task, NULL, &key_Task_attributes);
   led_TaskHandle = osThreadNew(Led_Task, NULL, &led_Task_attributes);
   /* USER CODE END RTOS_THREADS */
 
@@ -141,14 +148,34 @@ void StartDefaultTask(void* argument) {
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
+void Key_Task(void* argument) {
+  key_isr_msg_t key_msg;
+
+  for (;;) {
+    if (xQueueReceive(keyQueue, &key_msg, portMAX_DELAY) == pdPASS) {
+      key_event_t keyop = key_tick(key_msg);
+      if (keyop != KEY_NONE_PRESSED) {
+        // printf("keyop = [%d]\r\n", keyop);
+        xQueueSend(ledQueue, &keyop, 0);
+      }
+    }
+
+    osDelay(5);
+  }
+}
 void Led_Task(void* argument) {
+  key_event_t recv_data = KEY_NONE_PRESSED;
   led_cmd_t led_op = LED_CMD_TOGGLE;
   for (;;) {
-    /* 非阻塞取事件 */
-    key_event_t event = key_poll_event();
-    if (event != KEY_NONE_PRESSED) {
-      printf("recv_data = [%d]\r\n", event);
-      switch (event) {
+    if (ledQueue == NULL) {
+      osDelay(5);
+      continue;
+    }
+
+    /* 非阻塞取命令，有就喂给状态机 */
+    if (xQueueReceive(ledQueue, &recv_data, 0) == pdPASS) {
+      printf("recv_data = [%d]\r\n", recv_data);
+      switch (recv_data) {
       case KEY_SHORT_PRESSED:
         led_op = LED_CMD_TOGGLE;
         printf("KEY_SHORT_PRESSED → LED_CMD_TOGGLE\r\n");
@@ -158,15 +185,38 @@ void Led_Task(void* argument) {
         printf("KEY_LONG_PRESSED → LED_CMD_BLINK\r\n");
         break;
       default:
-        break;
+        continue;
       }
       led_sm_feed(led_op);
     }
 
-    /* 每 ms 推进 LED 状态机（闪烁节拍靠这个） */
+    /* 每次循环都推进状态机（翻转计时在这里） */
     led_sm_tick();
+
     osDelay(1);
   }
+}
+
+/* ---- EXTI 中断回调（覆盖 HAL 弱函数） ---- */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+  if (GPIO_Pin != KEY_Pin) return;
+
+  BaseType_t xHigher = pdFALSE;
+  key_isr_msg_t msg;
+  msg.tick = xTaskGetTickCountFromISR();
+
+  if (HAL_GPIO_ReadPin(KEY_GPIO_Port, KEY_Pin) == GPIO_PIN_RESET) {
+    msg.edge = KEY_EDGE_DOWN;
+    EXTI->FTSR &= ~KEY_Pin;
+    EXTI->RTSR |=  KEY_Pin;
+  } else {
+    msg.edge = KEY_EDGE_UP;
+    EXTI->RTSR &= ~KEY_Pin;
+    EXTI->FTSR |=  KEY_Pin;
+  }
+
+  xQueueSendFromISR(keyQueue, &msg, &xHigher);
+  portYIELD_FROM_ISR(xHigher);
 }
 
 /* USER CODE END Application */
