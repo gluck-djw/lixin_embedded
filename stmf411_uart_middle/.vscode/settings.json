@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "uart_proto.h": "c",
+        "main.h": "c",
+        "stdbool.h": "c",
+        "string.h": "c",
+        "t_list.h": "c",
+        "usart.h": "c",
+        "cstdlib": "c",
+        "segger_rtt.h": "c",
+        "segger_sysview.h": "c",
+        "segger_sysview_freertos.h": "c",
+        "stdio.h": "c"
+    }
+}
