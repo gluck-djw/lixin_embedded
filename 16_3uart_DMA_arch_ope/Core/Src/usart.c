@@ -24,14 +24,14 @@
 uart_ops_t uart_ops =
     {
         .pf_uart_recv = uart_recv,
-        .pf_uart_trans = uart_transmit_data,
+        .pf_uart_trans = uart_transmit,
         .pf_get_counter = get_counter,
         .pf_set_counter = set_counter};
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_rx;
-
+extern uart_proto_t g_uart_proto;
 /* USART1 init function */
 
 void MX_USART1_UART_Init(void)
@@ -147,7 +147,7 @@ static ring_buffer_t recv_buffer;
 static void uart_recv(void)
 {
 
-  // __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
+  // __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE); // 手动开 IDLE 中断
   // 固定长度
   //   HAL_UART_Receive_DMA(&huart1, uart1_rx_buf, 1);
 
@@ -155,11 +155,12 @@ static void uart_recv(void)
   HAL_UARTEx_ReceiveToIdle_DMA(&huart1, recv_buffer.data, sizeof(recv_buffer.data));
 }
 
-static void uart_transmit_data(const uint8_t *pdata, uint16_t len)
+static void uart_transmit(const uint8_t *pdata, uint16_t len)
 {
   HAL_UART_Transmit_DMA(&huart1, (uint8_t *)pdata, len);
 }
 
+/* return remaining untransferred bytes in DMA*/
 static uint16_t get_counter(void)
 {
   return ((uint16_t)__HAL_DMA_GET_COUNTER(&hdma_usart1_rx));
@@ -170,94 +171,18 @@ static void set_counter(uint16_t counter)
   __HAL_DMA_SET_COUNTER(&hdma_usart1_rx, counter);
 }
 
-void dma_rx_half_irq_callback(UART_HandleTypeDef *huart, uint16_t Size)
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-  if (huart->Instance == USART1)
-  {
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    size_t head_pos = 0;
-    uint8_t ret = 0xfe;
-
-    ret = ring_buffer_get_head(&g_ring_buffer, &head_pos);
-    if (ret != 0)
-    {
-      log_i("ring_buffer_get_head error: %d", ret);
-    }
-
-    uint32_t half_size = RING_BUF_SIZE / 2;
-    uint32_t move_pos = half_size - (head_pos % half_size);
-
-    ring_buffer_move_head(&g_ring_buffer, move_pos);
-
-    /* ② 通知前端 */
-    uint32_t notify = IRQ_SEND_TO_THREAD;
-    xQueueSendFromISR(xrecvque, &notify, &xHigherPriorityTaskWoken);
-
-    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-  }
+  // 通知上层，已经接收到数据
+  notify_isr_cb(&g_uart_proto);
 }
 
-void dma_rx_complete_irq_callback(UART_HandleTypeDef *huart, uint16_t Size)
+void HAL_UART_RxHalfCpltCallback(UART_HandleTypeDef *huart)
 {
-  if (huart->Instance == USART1)
-  {
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    log_i("dma_rx_irq_callback size:%d", Size);
-    size_t head_pos = 0;
-    uint8_t ret = 0xfe;
-
-    ret = ring_buffer_get_head(&g_ring_buffer, &head_pos);
-    if (ret != 0)
-    {
-      log_i("ring_buffer_get_head error: %d", ret);
-    }
-    uint32_t move_pos = RING_BUF_SIZE - (head_pos % RING_BUF_SIZE);
-    log_i("move_pos:%d", move_pos);
-    ring_buffer_move_head(&g_ring_buffer, move_pos);
-    log_i("ring_buffer_move_head done, head_pos:%d", g_ring_buffer.head);
-
-    /* ② 通知前端 */
-    uint32_t notify = IRQ_SEND_TO_THREAD;
-    xQueueSendFromISR(xrecvque, &notify, &xHigherPriorityTaskWoken);
-
-    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-  }
+  notify_isr_cb(&g_uart_proto);
 }
 
-void uart_idle_irq_callback(UART_HandleTypeDef *huart, uint16_t Size)
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
-  if (huart->Instance == USART1)
-  {
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    log_i("uart_idle_irq_callback, size:%d", Size);
-    size_t head_pos = 0;
-    uint8_t ret = 0xfe;
-    uint32_t move_pos = 0;
-
-    ret = ring_buffer_get_head(&g_ring_buffer, &head_pos);
-    if (ret != 0)
-    {
-      log_i("ring_buffer_get_head error: %d", ret);
-    }
-    if (Size < head_pos)
-    {
-      move_pos = (Size + RING_BUF_SIZE) - (head_pos % RING_BUF_SIZE);
-    }
-    else
-    {
-      move_pos = Size - (head_pos % RING_BUF_SIZE);
-    }
-
-    log_i("move_pos:%d", move_pos);
-    ring_buffer_move_head(&g_ring_buffer, move_pos);
-    log_i("ring_buffer_move_head done, head_pos:%d", g_ring_buffer.head);
-
-    /* ② 通知前端 */
-    uint32_t notify = IRQ_SEND_TO_THREAD;
-    xQueueSendFromISR(xrecvque, &notify, &xHigherPriorityTaskWoken);
-
-    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-  }
+  notify_isr_cb(&g_uart_proto);
 }
-
-/* USER CODE END 1 * /
