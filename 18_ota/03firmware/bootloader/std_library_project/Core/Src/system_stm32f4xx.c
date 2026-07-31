@@ -341,9 +341,9 @@
      through STLINK MCO pin of STM32F103 microcontroller. The frequency cannot be changed
      and is fixed at 8 MHz. 
      Hardware configuration needed for Nucleo Board:
-     – SB54, SB55 OFF
-     – R35 removed
-     – SB16, SB50 ON */
+     ï¿½ SB54, SB55 OFF
+     ï¿½ R35 removed
+     ï¿½ SB16, SB50 ON */
 /* #define USE_HSE_BYPASS */
 
 #if defined(USE_HSE_BYPASS)     
@@ -366,10 +366,10 @@
  #define PLL_M      8
 #elif defined (STM32F410xx) || defined (STM32F411xE)
  #if defined(USE_HSE_BYPASS)
-  #define PLL_M      8    
- #else /* !USE_HSE_BYPASS */
-  #define PLL_M      16
- #endif /* USE_HSE_BYPASS */
+  #define PLL_M      8
+ #else
+  #define PLL_M      16    /* HSI=16MHz: 16/16=1MHz VCO input, SYSCLK=100MHz */
+ #endif
 #else
 #endif /* STM32F40_41xxx || STM32F427_437xx || STM32F429_439xx || STM32F401xx || STM32F469_479xx */  
 
@@ -853,12 +853,12 @@ static void SetSysClock(void)
   }
   
   /* Configure Flash prefetch, Instruction cache, Data cache and wait state */
-  FLASH->ACR = FLASH_ACR_PRFTEN | FLASH_ACR_ICEN |FLASH_ACR_DCEN |FLASH_ACR_LATENCY_2WS;
-  
+  FLASH->ACR = FLASH_ACR_PRFTEN | FLASH_ACR_ICEN |FLASH_ACR_DCEN |FLASH_ACR_LATENCY_3WS;
+
   /* Select the main PLL as system clock source */
   RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_SW));
   RCC->CFGR |= RCC_CFGR_SW_PLL;
-  
+
   /* Wait till the main PLL is used as system clock source */
   while ((RCC->CFGR & (uint32_t)RCC_CFGR_SWS ) != RCC_CFGR_SWS_PLL);
   {

@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "elog.h"
+#include "SEGGER_RTT.h"
 
 extern void elog_test(void);
 /* USER CODE END Includes */
@@ -125,11 +126,10 @@ void StartDefaultTask(void *argument)
   elog_set_fmt(ELOG_LVL_DEBUG, ELOG_FMT_ALL);
   elog_set_fmt(ELOG_LVL_VERBOSE, ELOG_FMT_ALL);
 
+	elog_test();
   /* Infinite loop */
   for(;;)
   {
-    elog_test();
-    osDelay(100);
   }
   /* USER CODE END StartDefaultTask */
 }

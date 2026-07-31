@@ -68,23 +68,23 @@ PUTCHAR_PROTOTYPE
   return ch;
 }
 
-//ÑÓÊ±º¯Êý£¬»ùÓÚHCLKÆµÂÊ
- void delay(volatile uint32_t count)
+// ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½HCLKÆµï¿½ï¿½
+void delay(volatile uint32_t count)
 {
-	while(count--)
-	{
-		//¿ÕÑ­»·£¬ÏûºÄÊ±¼ä
-	}
+  while (count--)
+  {
+    // ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+  }
 }
 
-//¸ù¾ÝHCLK 100MHZ ¼ÆËãÑÓÊ±
+// ï¿½ï¿½ï¿½ï¿½HCLK 100MHZ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±
 void delay_seconds(uint32_t seconds)
 {
-	uint32_t count = 100000000;
-	for(uint32_t i = 0;i < seconds;i++)
-	{
-		delay(count);//µ÷ÓÃÑÓÊ±
-	}
+  uint32_t count = 100000000;
+  for (uint32_t i = 0; i < seconds; i++)
+  {
+    delay(count); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±
+  }
 }
 /* USER CODE BEGIN PFP */
 
@@ -96,12 +96,11 @@ void JumpToApp(void)
 {
   // pc pointer
   uint32_t jumpAddr = (*(__IO uint32_t *)(APP_ADDRESS + 4));
-	
 
   if (((*(__IO uint32_t *)APP_ADDRESS) & 0x2FFE0000) == 0x20000000)
   {
-		delay_seconds(2);
-		for (int i = 0; i < 5; i++)
+    delay_seconds(2);
+    for (int i = 0; i < 5; i++)
     {
       printf("Bootloader running...\r\n");
     }
@@ -140,10 +139,15 @@ int main(void)
   /* USER CODE BEGIN 1 */
   SCB->VTOR = 0x8000000 | 0x0;
   /* USER CODE END 1 */
-    /* ???????:?????????,?? HAL????? */
-	RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
-	GPIOC->MODER  = (GPIOC->MODER & ~(3u<<26)) | (1u<<26); // PC13 ??
-	for (volatile int i=0;i<8;i++){ GPIOC->ODR ^= (1u<<13); for(volatile int d=0;d<200000;d++); }
+  /* ???????:?????????,?? HAL????? */
+  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
+  GPIOC->MODER = (GPIOC->MODER & ~(3u << 26)) | (1u << 26); // PC13 ??
+  for (volatile int i = 0; i < 8; i++)
+  {
+    GPIOC->ODR ^= (1u << 13);
+    for (volatile int d = 0; d < 200000; d++)
+      ;
+  }
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */

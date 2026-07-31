@@ -107,6 +107,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   SEGGER_RTT_Init();
   SEGGER_RTT_printf(0, "RTT Init OK!\r\n");
+	
 
   /* USER CODE END 2 */
 

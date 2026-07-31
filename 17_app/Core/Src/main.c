@@ -74,9 +74,10 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	SCB->VTOR = 0x8000000 | 0x10000;
+	/* 向量表地址必须与 Bootloader 的 ApplicationAddress 一致 */
+	SCB->VTOR = 0x08010000 ; 
 	__enable_irq();
-	HAL_DeInit();
+	// HAL_DeInit();  // 删除！会复位外设，影响调试和系统稳定性
 
   /* USER CODE END 1 */
 

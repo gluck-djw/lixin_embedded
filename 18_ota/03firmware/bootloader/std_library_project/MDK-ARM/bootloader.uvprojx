@@ -277,7 +277,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x80000</Size>
+                <Size>0x10000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F411xE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Core\Inc;..\Drivers\CMSIS\Inc;..\Drivers\STM32F4xx_StdPeriph_Diver\inc;..\Middlewares\easylogger\inc;..\Middlewares\easylogger\plugins\file;..\Middlewares\easylogger\plugins\flash;..\Middlewares\RTT</IncludePath>
+              <IncludePath>..\Core\Inc;..\Drivers\CMSIS\Inc;..\Drivers\STM32F4xx_StdPeriph_Diver\inc;..\Middlewares\easylogger\inc;..\Middlewares\easylogger\plugins\file;..\Middlewares\easylogger\plugins\flash;..\Middlewares\RTT;..\Middlewares\ymodem;..\Core\Inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -403,9 +403,19 @@
               <FilePath>..\Core\Src\system_stm32f4xx.c</FilePath>
             </File>
             <File>
+              <FileName>flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\usart.c</FilePath>
+            </File>
+            <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\gpio.c</FilePath>
+              <FilePath>..\Core\Src\gpio.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -687,6 +697,21 @@
               <FileName>SEGGER_RTT_printf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Middlewares\RTT\SEGGER_RTT_printf.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Middlewares/Ymodem</GroupName>
+          <Files>
+            <File>
+              <FileName>ymodem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Middlewares\ymodem\ymodem.c</FilePath>
+            </File>
+            <File>
+              <FileName>common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Middlewares\ymodem\common.c</FilePath>
             </File>
           </Files>
         </Group>

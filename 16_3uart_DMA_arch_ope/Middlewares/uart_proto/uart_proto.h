@@ -132,6 +132,9 @@ typedef struct
     uint32_t (*pf_os_enter_critical_from_isr)(void);
     void (*pf_os_exit_critical_from_isr)(uint32_t BASEPRI);
 
+    void* (*pf_os_malloc)(uint8_t data_size);
+    void (*pf_os_free)(void *pv);
+
 } os_interface_t;
 
 typedef struct
@@ -149,7 +152,7 @@ typedef struct
     uint32_t head;                      // total bytes read from the receive buffer
     uint32_t tail;                      // total bytes parsed
     uint8_t *parse_buf;                 // buffer for parsing frame
-    volatile uint8_t pending_frame_cnt; // pending frame count
+    volatile uint8_t pending_que_cnt; // pending frame count
     volatile uint32_t data_counter;     // DMA recive data counter
 
 } uart_proto_priv_data_t;
