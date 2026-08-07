@@ -1,0 +1,45 @@
+{
+    "configurations": [
+        {
+            "name": "STM32F411CE (Keil)",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/Core/Inc",
+                "${workspaceFolder}/Drivers/CMSIS/Inc",
+                "${workspaceFolder}/Drivers/STM32F4xx_StdPeriph_Diver/inc",
+                "${workspaceFolder}/Middlewares/easylogger/inc",
+                "${workspaceFolder}/Middlewares/easylogger/plugins/file",
+                "${workspaceFolder}/Middlewares/easylogger/plugins/flash",
+                "${workspaceFolder}/Middlewares/RTT",
+                "${workspaceFolder}/Middlewares/ymodem",
+                "D:/MDK/Core/ARM/ARMCC/include"
+            ],
+            "defines": [
+                "USE_STDPERIPH_DRIVER",
+                "STM32F411xE",
+                "__CC_ARM"
+            ],
+            "compilerPath": "",
+            "cStandard": "c99",
+            "cppStandard": "",
+            "intelliSenseMode": "arm",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "${workspaceFolder}/Core/Inc",
+                    "${workspaceFolder}/Drivers/CMSIS/Inc",
+                    "${workspaceFolder}/Drivers/STM32F4xx_StdPeriph_Diver/inc",
+                    "${workspaceFolder}/Drivers/STM32F4xx_StdPeriph_Diver/src",
+                    "${workspaceFolder}/Middlewares/easylogger/inc",
+                    "${workspaceFolder}/Middlewares/easylogger/plugins/file",
+                    "${workspaceFolder}/Middlewares/easylogger/plugins/flash",
+                    "${workspaceFolder}/Middlewares/RTT",
+                    "${workspaceFolder}/Middlewares/ymodem",
+                    "D:/MDK/Core/ARM/ARMCC/include"
+                ],
+                "limitSymbolsToIncludedHeaders": false
+            }
+        }
+    ],
+    "version": 4
+}

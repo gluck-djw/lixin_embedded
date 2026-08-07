@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F411xE</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Core\Inc;..\Drivers\CMSIS\Inc;..\Drivers\STM32F4xx_StdPeriph_Diver\inc;..\Middlewares\easylogger\inc;..\Middlewares\easylogger\plugins\file;..\Middlewares\easylogger\plugins\flash;..\Middlewares\RTT;..\Middlewares\ymodem;..\Core\Inc</IncludePath>
+              <IncludePath>..\Core\Inc;..\Drivers\CMSIS\Inc;..\Drivers\STM32F4xx_StdPeriph_Diver\inc;..\Middlewares\easylogger\inc;..\Middlewares\easylogger\plugins\file;..\Middlewares\easylogger\plugins\flash;..\Middlewares\RTT;..\Middlewares\ymodem;..\Core\Inc;..\Algorithm</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -712,6 +712,16 @@
               <FileName>common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Middlewares\ymodem\common.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Algorithm</GroupName>
+          <Files>
+            <File>
+              <FileName>aes.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Algorithm\aes.c</FilePath>
             </File>
           </Files>
         </Group>

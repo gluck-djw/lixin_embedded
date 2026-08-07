@@ -24,6 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include "elog.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -65,6 +66,37 @@ void SystemClock_Config(void);
      HAL_UART_Transmit(&huart1, (uint8_t *)&ch,1,0xFFFF);
      return ch;
  }
+ 
+ void Easylogger_Configuration(void)
+{
+	elog_init();
+	elog_set_fmt(ELOG_LVL_ASSERT, ELOG_FMT_LVL);
+	elog_set_fmt(ELOG_LVL_ERROR, ELOG_FMT_ALL);
+	elog_set_fmt(ELOG_LVL_WARN, ELOG_FMT_LVL | ELOG_FMT_P_INFO);
+	elog_set_fmt(ELOG_LVL_INFO, ELOG_FMT_ALL);
+	elog_set_fmt(ELOG_LVL_DEBUG, ELOG_FMT_ALL);
+	elog_set_fmt(ELOG_LVL_VERBOSE, ELOG_FMT_ALL);
+
+	elog_start();
+}
+
+	void delay(volatile uint32_t count)
+	{
+		while (count--)
+		{
+			// 空循环，用于延时
+		}
+	}
+
+	// 基于HCLK 100MHz 软件延时
+	void delay_seconds(uint32_t seconds)
+	{
+		uint32_t count = 100000000;
+		for (uint32_t i = 0; i < seconds; i++)
+		{
+			delay(count); // 软件延时
+		}
+	}
 /* USER CODE END 0 */
 
 /**
@@ -74,16 +106,22 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	/* 向量表地址必须与 Bootloader 的 ApplicationAddress 一致 */
-	SCB->VTOR = 0x08010000 ; 
-	__enable_irq();
-	// HAL_DeInit();  // 删除！会复位外设，影响调试和系统稳定性
+
 
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+		/* 向量表地址必须与 Bootloader 的 ApplicationAddress 一致 */
+	SCB->VTOR = 0x08010000 ; 
+	__enable_irq();
+	// HAL_DeInit();  // 删除！会复位外设，影响调试和系统稳定性
+	SEGGER_RTT_Init(); 
+	Easylogger_Configuration();
+	log_i("jumped to app");
+  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
+  GPIOC->MODER = (GPIOC->MODER & ~(3u << 26)) | (1u << 26); // PC13 输出
   HAL_Init();
 
   /* USER CODE BEGIN Init */
@@ -91,7 +129,7 @@ int main(void)
   /* USER CODE END Init */
 
   /* Configure the system clock */
-  SystemClock_Config();
+//  SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
 
@@ -101,6 +139,8 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+// 延时函数，依赖于HCLK频率
+
 
   /* USER CODE END 2 */
 
@@ -109,8 +149,11 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-		printf("hello world!\r\n");
-    /* USER CODE BEGIN 3 */
+		log_i("hello world!");
+		delay_seconds(1);
+		GPIOC->ODR ^= (1u << 13);
+		delay_seconds(1);		
+		
   }
   /* USER CODE END 3 */
 }

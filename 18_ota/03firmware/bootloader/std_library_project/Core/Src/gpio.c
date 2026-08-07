@@ -21,7 +21,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "gpio.h"
-
+// ① 全局变量
+volatile uint32_t uwTick;
 SysTick_Handler();
 // ③ 毫秒延迟
 void Delay(uint32_t nTime)

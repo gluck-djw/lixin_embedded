@@ -236,7 +236,7 @@ int32_t Ymodem_Receive(uint8_t *buf)
             else
             {
               memcpy(buf_ptr, packet_data + PACKET_HEADER, packet_length);
-              RamSource = (uint32_t)buf;
+              RamSource = (uint32_t)buf_ptr;
               /* Unlock flash before programming */
               FLASH_Unlock();
               FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGPERR | FLASH_FLAG_WRPERR);
