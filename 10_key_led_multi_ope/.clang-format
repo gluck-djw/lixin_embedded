@@ -1,0 +1,55 @@
+---
+# clang-format 配置文件 — STM32 CubeMX 项目
+# 使用: clang-format -i <file>  或编辑器保存时自动调用
+BasedOnStyle: LLVM
+
+# 缩进: 2 空格 (匹配 CubeMX 生成风格)
+IndentWidth: 2
+TabWidth: 2
+UseTab: Never
+ContinuationIndentWidth: 2
+
+# 大括号: 函数/if/while 均不换行
+BreakBeforeBraces: Attach
+
+# 列宽
+ColumnLimit: 100
+
+# 指针/引用对齐: 靠左 (uint8_t *ptr)
+PointerAlignment: Left
+ReferenceAlignment: Left
+
+# 空格: if/for/while 后加空格
+SpaceBeforeParens: ControlStatements
+
+#  include 排序: 关闭 (CubeMX 有特定 include 顺序)
+SortIncludes: Never
+
+# 宏缩进
+AlignConsecutiveMacros: AcrossEmptyLines
+
+# 函数声明/调用参数
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+BinPackArguments: false
+BinPackParameters: false
+
+# 赋值对齐
+AlignConsecutiveAssignments: None
+
+# 注释
+AlignTrailingComments: true
+SpacesBeforeTrailingComments: 2
+
+# 空行: 最多保留一行
+MaxEmptyLinesToKeep: 1
+
+# 短函数/if/for 不强制单行
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
+
+# 换行后缩进
+IndentCaseLabels: false
+IndentPPDirectives: None
